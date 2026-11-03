@@ -3,7 +3,7 @@
   "name": "Mi Tiendita - Caja y Precios",
   "short_name": "Mi Tiendita",
   "description": "Sistema local de precios y cobro para abarrotes",
-  "start_url": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
