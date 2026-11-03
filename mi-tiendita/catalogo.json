@@ -1,0 +1,16 @@
+
+{
+  "productos": [
+    {
+      "codigo": "CODIGO_DE_BARRAS",
+      "nombre": "Nombre del producto",
+      "marca": "Marca",
+      "presentacion": "600 ml",
+      "categoria": "Bebidas",
+      "descripcion": "Descripción del producto",
+      "compra": 0,
+      "precio": 0,
+      "existencia": 0
+    }
+  ]
+}
