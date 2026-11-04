@@ -779,26 +779,44 @@ function estado(){
  ventas.length+' ventas guardadas en este dispositivo.';
 }
 
-/* ESCÁNER DE CÓDIGOS DE BARRAS */
 
+/* ESCÁNER DE CÓDIGOS DE BARRAS */
 
 async function abrirCamara(destino='venta'){
 
  destinoEscaner=destino;
 
+ // Comprobar compatibilidad
+ if(!navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia){
+
+  alert('La cámara necesita HTTPS o localhost.');
+  return;
+ }
+
  if(!('BarcodeDetector' in window)){
-  alert('Tu navegador no es compatible con el escáner.');
+  alert('Tu navegador no es compatible con el escáner de códigos.');
   return;
  }
 
  try{
 
+  // Crear detector
   if(!detector){
+
    detector=new BarcodeDetector({
-    formats:['ean_13','ean_8','upc_a','upc_e','code_128']
+    formats:[
+     'ean_13',
+     'ean_8',
+     'upc_a',
+     'upc_e',
+     'code_128'
+    ]
    });
+
   }
 
+  // Solicitar acceso a la cámara
   stream=await navigator.mediaDevices.getUserMedia({
    video:{
     facingMode:{ideal:'environment'}
@@ -810,7 +828,8 @@ async function abrirCamara(destino='venta'){
 
   video.srcObject=stream;
 
-  document.getElementById('camaraBox').classList.remove('hidden');
+  document.getElementById('camaraBox')
+   .classList.remove('hidden');
 
   escaneando=true;
 
@@ -822,116 +841,123 @@ async function abrirCamara(destino='venta'){
 
   cerrarCamara();
 
-  alert('Error al abrir la cámara: '+error.message);
+  alert(
+   'No se pudo abrir la cámara. '+
+   'Comprueba los permisos del navegador.\n'+
+   error.message
+  );
 
  }
 
 }
 
- if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-  alert('La cámara necesita que abras la aplicación mediante HTTPS.');
-  return;
- }
 
- try{
-  detector=new BarcodeDetector({
-   formats:['ean_13','ean_8','upc_a','upc_e','code_128']
-  });
-
-  stream=await navigator.mediaDevices.getUserMedia({
-   video:{facingMode:'environment'},
-   audio:false
-  });
-
-  const video=document.getElementById('video');
-
-  video.srcObject=stream;
-
-  document.getElementById('camaraBox').classList.remove('hidden');
-
-  escaneando=true;
-
-  await video.play();
-
-  leerCamara();
-
- }catch(e){
-  cerrarCamara();
-  alert('No se pudo abrir la cámara. Comprueba los permisos.');
- }
-}
+/* LEER CÓDIGOS DE BARRAS */
 
 async function leerCamara(){
+
  if(!escaneando)return;
 
  try{
+
   const video=document.getElementById('video');
-  const resultados=await detector.detect(video);
 
-  if(resultados.length){
-   const codigo= resultados[0].rawValue;
+  if(video.readyState>=2){
 
-   cerrarCamara();
+   const resultados=await detector.detect(video);
 
+   if(resultados.length){
 
-if(destinoEscaner==='producto'){
+    const codigo=resultados[0].rawValue;
 
- const p=productos.find(x=>x.codigo===codigo);
+    cerrarCamara();
 
- if(p){
+    // Escaneo desde productos
+    if(destinoEscaner==='producto'){
 
-  editar(encodeURIComponent(codigo));
+     const p=productos.find(
+      x=>x.codigo===codigo
+     );
 
-  document.getElementById('estadoProducto').textContent=
-  'Producto encontrado en tu catálogo local.';
+     if(p){
 
- }else{
+      editar(encodeURIComponent(codigo));
 
-  nuevoProducto();
+      document.getElementById('estadoProducto')
+       .textContent='Producto encontrado en tu catálogo local.';
 
-  document.getElementById('pcodigo').value=codigo;
+     }else{
 
-  document.getElementById('estadoProducto').textContent=
-  'Código nuevo. Completa los datos del producto.';
+      nuevoProducto();
 
- }
+      document.getElementById('pcodigo').value=codigo;
 
-}else{
+      document.getElementById('estadoProducto')
+       .textContent='Código nuevo. Completa los datos del producto.';
 
- document.getElementById('codigo').value=codigo;
+     }
 
- agregar();
+    }else{
 
-}
+     // Escaneo desde ventas
+     document.getElementById('codigo').value=codigo;
 
-return;
+     agregar();
+
+    }
+
+    return;
+
+   }
+
   }
 
- }catch(e){}
+ }catch(error){
+
+  console.error('Error al escanear:',error);
+
+ }
 
  if(escaneando){
+
   setTimeout(leerCamara,300);
+
  }
+
 }
 
+
+/* CERRAR CÁMARA */
+
 function cerrarCamara(){
+
  escaneando=false;
 
  if(stream){
-  stream.getTracks().forEach(t=>t.stop());
+
+  stream.getTracks().forEach(track=>{
+   track.stop();
+  });
+
  }
 
  stream=null;
 
  const video=document.getElementById('video');
 
- if(video)video.srcObject=null;
+ if(video){
+  video.pause();
+  video.srcObject=null;
+ }
 
  const caja=document.getElementById('camaraBox');
 
- if(caja)caja.classList.add('hidden');
-}
+ if(caja){
+  caja.classList.add('hidden');
+ }
 
+}
+ 
 /* INICIO DE LA APLICACIÓN */
 
 dibujar();
