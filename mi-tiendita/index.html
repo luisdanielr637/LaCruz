@@ -6,7 +6,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#14532d">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Mi Tiendita</title>
+<title>Mi Tiendita 3.0</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f1f5f2;color:#17251c;font-family:Arial;padding-bottom:30px}
@@ -15,73 +16,137 @@ header small{display:block;font-size:12px;font-weight:normal;margin-top:5px}
 nav{display:flex;background:white;position:sticky;top:0;z-index:3;overflow:auto}
 nav button{flex:1;min-width:65px;padding:13px 4px;border:0;background:white;font-size:12px}
 nav button.active{color:#15803d;border-bottom:3px solid #15803d;font-weight:bold}
-main{max-width:600px;margin:auto;padding:13px}
+main{max-width:650px;margin:auto;padding:13px}
 .panel{background:white;padding:15px;border-radius:14px;margin-bottom:13px;box-shadow:0 2px 8px #0000000b}
 h2{font-size:19px;margin:0 0 13px}
-input,select{width:100%;padding:13px;border:1px solid #cbd5ce;border-radius:9px;font-size:16px;margin:5px 0 12px;background:white}
+input,select,textarea{width:100%;padding:13px;border:1px solid #cbd5ce;border-radius:9px;font-size:16px;margin:5px 0 12px;background:white}
 label{font-size:13px;color:#64746a}
 button{cursor:pointer}
-.btn{width:100%;border:0;border-radius:10px;padding:14px;background:#15803d;color:white;font-size:16px;font-weight:bold;margin:4px 0}
+.btn{width:100%;border:0;border-radius:10px;padding:14px;background:#15803d;color:white;font-size:15px;font-weight:bold;margin:4px 0}
 .alt{background:#e5eee7;color:#14532d}
 .red{background:#fee2e2;color:#991b1b}
 .total{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:bold}
-.total strong,.big{font-size:30px;color:#15803d}
+.total strong{font-size:27px;color:#15803d}
 .muted{font-size:13px;color:#64746a}
-.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #eee}
+.item{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:12px 0;border-bottom:1px solid #eee}
 .item button{border:0;border-radius:7px;padding:9px}
-.hidden{display:none}
+.hidden{display:none!important}
 video{width:100%;border-radius:10px;background:#111}
-.tag{font-size:11px;background:#e5eee7;padding:4px 7px;border-radius:7px}
+.photo{width:110px;height:110px;object-fit:contain;background:#f1f5f2;border-radius:12px}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{min-width:0}
+.row img{flex-shrink:0}
+small{overflow-wrap:anywhere}
 </style>
 </head>
+
 <body>
 <header>🛒 Mi Tiendita
-<small>Precios, ventas y caja</small></header>
+<small>Productos, precios, inventario y caja</small>
+</header>
+
 <nav>
 <button class="active" onclick="tab('venta',this)">Vender</button>
 <button onclick="tab('productos',this)">Productos</button>
 <button onclick="tab('ventas',this)">Ventas</button>
 <button onclick="tab('respaldo',this)">Respaldo</button>
 </nav>
+
 <main>
 
 <section id="venta">
 <div class="panel">
 <h2>Escanear producto</h2>
-<input id="codigo" placeholder="Escanea o escribe el código"
+<input id="codigo" placeholder="Código de barras"
 autocomplete="off" onkeydown="if(event.key==='Enter')agregar()">
 <button class="btn" onclick="agregar()">AGREGAR PRODUCTO</button>
-<button class="btn alt" onclick="abrirCamara()">📷 ESCANEAR CON CÁMARA</button>
-<div id="camaraBox" class="hidden">
+<button class="btn alt" onclick="abrirCamara('venta')">📷 ESCANEAR CON CÁMARA</button>
+</div>
+
+<div class="panel hidden" id="camaraBox">
+<h2>Escáner de códigos</h2>
 <video id="video" autoplay playsinline></video>
-<button class="btn red" onclick="cerrarCamara()">Cerrar cámara</button>
+<p class="muted">Coloca el código de barras frente a la cámara.</p>
+<button class="btn red" onclick="cerrarCamara()">CERRAR CÁMARA</button>
 </div>
-</div>
+
 <div class="panel">
 <h2>Compra del cliente</h2>
 <div id="carrito"><p class="muted">Sin productos todavía.</p></div>
 <div class="total"><span>TOTAL</span><strong id="total">$0.00</strong></div>
-<button class="btn" onclick="cobrar()">💵 COBRAR</button>
-<button class="btn alt" onclick="limpiar()">Nueva compra</button>
+<button class="btn" onclick="cobrar()">💰 COBRAR</button>
+<button class="btn alt" onclick="limpiar()">NUEVA COMPRA</button>
 </div>
 </section>
 
 <section id="productos" class="hidden">
 <div class="panel">
 <h2>Registrar o actualizar producto</h2>
+
 <label>Código de barras</label>
-<input id="pcodigo" placeholder="Código">
+<input id="pcodigo" placeholder="Código del producto">
+
+<button class="btn alt" onclick="abrirCamara('producto')">📷 ESCANEAR CÓDIGO</button>
+
 <label>Nombre del producto</label>
 <input id="pnombre" placeholder="Ej. Coca-Cola 600 ml">
-<label>Precio de venta en pesos</label>
-<input id="pprecio" type="number" min="0" step="0.01" placeholder="20.00">
-<button class="btn" onclick="guardarProducto()">GUARDAR PRODUCTO</button>
-<p class="muted">Si el código ya existe, podrás confirmar la actualización del precio.</p>
+
+<label>Marca</label>
+<input id="pmarca" placeholder="Marca">
+
+<label>Presentación</label>
+<input id="ppresentacion" placeholder="Ej. 600 ml, 1 kg">
+
+<label>Categoría</label>
+<input id="pcategoria" placeholder="Ej. Bebidas">
+
+<label>Descripción o características</label>
+<textarea id="pdescripcion" rows="3" placeholder="Información del producto"></textarea>
+
+<label>Precio de compra ($)</label>
+<input id="pcompra" type="number" min="0" step="0.01" placeholder="0.00">
+
+<label>Precio de venta ($)</label>
+<input id="pprecio" type="number" min="0" step="0.01" placeholder="0.00">
+
+<label>Existencia actual</label>
+<input id="pexistencia" type="number" min="0" step="1" value="0">
+
+<div class="item">
+<span>Ganancia por unidad</span>
+<b id="pganancia">$0.00</b>
 </div>
+<div class="item">
+<span>Margen de ganancia</span>
+<b id="pmargen">0%</b>
+</div>
+
+<h2 style="margin-top:18px">Fotografía del producto</h2>
+<div id="fotoActual" class="muted">Sin fotografía registrada.</div>
+
+<label>Seleccionar o tomar fotografía</label>
+<input type="file" id="fotoArchivo" accept="image/*" capture="environment">
+
+<button class="btn alt" onclick="seleccionarFoto()">AGREGAR / ACTUALIZAR FOTO</button>
+<button class="btn red" onclick="eliminarFoto()">ELIMINAR FOTO</button>
+
+<button class="btn" onclick="guardarProducto()">GUARDAR PRODUCTO</button>
+<button class="btn alt" onclick="nuevoProducto()">LIMPIAR FORMULARIO</button>
+
+<p id="estadoProducto" class="muted"></p>
+</div>
+
 <div class="panel">
-<h2>Catálogo de precios</h2>
-<input id="buscar" placeholder="Buscar producto o código" oninput="listarProductos()">
+<h2>Catálogo de productos</h2>
+<input id="buscar" placeholder="Buscar por nombre, marca o código" oninput="listarProductos()">
 <div id="listaProductos"></div>
+</div>
+
+<div class="panel">
+<h2>Importar catálogo</h2>
+<p class="muted">Permite agregar productos desde un archivo JSON guardado en tu dispositivo.</p>
+<input type="file" id="catalogoArchivo" accept=".json,application/json">
+<button class="btn alt" onclick="importarCatalogo()">IMPORTAR CATÁLOGO</button>
 </div>
 </section>
 
@@ -101,249 +166,735 @@ autocomplete="off" onkeydown="if(event.key==='Enter')agregar()">
 
 <section id="respaldo" class="hidden">
 <div class="panel">
-<h2>Crear respaldo</h2>
-<p class="muted">Guarda todos tus productos, precios, cambios de precio y ventas en un archivo JSON.</p>
-<button class="btn" onclick="exportar()">⬇ DESCARGAR RESPALDO</button>
+<h2>Crear respaldo completo</h2>
+<p class="muted">Guarda productos, fotografías, precios, existencias e historial de ventas.</p>
+<button class="btn" onclick="exportar()">DESCARGAR RESPALDO</button>
 </div>
 <div class="panel">
-<h2>Restaurar información</h2>
-<p class="muted">Selecciona un respaldo creado anteriormente. La restauración reemplazará los datos actuales.</p>
+<h2>Restaurar respaldo</h2>
 <input type="file" id="archivo" accept=".json,application/json">
-<button class="btn alt" onclick="restaurar()">RESTAURAR RESPALDO</button>
+<button class="btn alt" onclick="restaurar()">RESTAURAR INFORMACIÓN</button>
 </div>
 <div class="panel">
 <h2>Almacenamiento</h2>
-<p class="muted" id="estadoDatos"></p>
-<button class="btn alt" onclick="estado()">Actualizar información</button>
+<p id="estadoDatos" class="muted"></p>
+<button class="btn alt" onclick="estado()">ACTUALIZAR INFORMACIÓN</button>
 </div>
 </section>
 
 </main>
+
+ 
 <script>
 const leer=(k,d)=>{
- try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}
+ try{return JSON.parse(localStorage.getItem(k))??d}
+ catch(e){return d}
 };
+
 let productos=leer('mt_productos',[]);
 let ventas=leer('mt_ventas',[]);
 let carrito=[];
-let stream=null,detector=null,escaneando=false;
+let stream=null;
+let detector=null;
+let escaneando=false;
+let destinoEscaner='venta';
+let fotoTemporal=null;
 
-const dinero=n=>Number(n).toLocaleString('es-MX',
-{style:'currency',currency:'MXN'});
+const dinero=n=>Number(n||0).toLocaleString('es-MX',{
+ style:'currency',currency:'MXN'
+});
 
 function guardar(){
  localStorage.setItem('mt_productos',JSON.stringify(productos));
  localStorage.setItem('mt_ventas',JSON.stringify(ventas));
 }
+
 function seguro(s){
- return String(s).replace(/[&<>"']/g,c=>({
+ return String(s??'').replace(/[&<>"']/g,c=>({
  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
  }[c]));
 }
+
 function tab(id,btn){
  cerrarCamara();
  ['venta','productos','ventas','respaldo'].forEach(x=>
- document.getElementById(x).classList.toggle('hidden',x!==id));
+ document.getElementById(x).classList.toggle('hidden',x!==id)
+ );
  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
  btn.classList.add('active');
+
  if(id==='productos')listarProductos();
  if(id==='ventas')listarVentas();
  if(id==='respaldo')estado();
 }
-function agregar(){
- let codigo=document.getElementById('codigo').value.trim();
- if(!codigo)return;
- let p=productos.find(x=>x.codigo===codigo);
- if(!p){
- alert('Producto no registrado. Regístralo en Productos.');
- return;
+
+function nuevoProducto(){
+ [
+ 'pcodigo','pnombre','pmarca','ppresentacion',
+ 'pcategoria','pdescripcion','pcompra','pprecio'
+ ].forEach(id=>document.getElementById(id).value='');
+
+ document.getElementById('pexistencia').value=0;
+ document.getElementById('fotoArchivo').value='';
+ document.getElementById('estadoProducto').textContent='';
+ document.getElementById('fotoActual').textContent='Sin fotografía registrada.';
+
+ fotoTemporal=null;
+ calcularGanancia();
+}
+
+function calcularGanancia(){
+ const compra=Number(document.getElementById('pcompra').value)||0;
+ const venta=Number(document.getElementById('pprecio').value)||0;
+
+ document.getElementById('pganancia').textContent=dinero(venta-compra);
+ document.getElementById('pmargen').textContent=
+ (venta>0?((venta-compra)/venta*100):0).toFixed(2)+'%';
+}
+
+['pcompra','pprecio'].forEach(id=>{
+ document.getElementById(id).addEventListener('input',calcularGanancia);
+});
+
+/* FOTOGRAFÍAS */
+
+function seleccionarFoto(){
+ document.getElementById('fotoArchivo').click();
+}
+
+document.getElementById('fotoArchivo').addEventListener('change',e=>{
+ const archivo=e.target.files[0];
+ if(!archivo)return;
+
+ if(!archivo.type.startsWith('image/')){
+  alert('Selecciona una fotografía válida.');
+  return;
  }
- let existente=carrito.find(x=>x.codigo===codigo);
- if(existente)existente.cantidad++;
- else carrito.push({...p,cantidad:1});
+
+ if(archivo.size>10*1024*1024){
+  alert('La fotografía original no debe superar 10 MB.');
+  e.target.value='';
+  return;
+ }
+
+ const lector=new FileReader();
+
+ lector.onload=()=>{
+  const imagen=new Image();
+
+  imagen.onload=()=>{
+   const max=900;
+   const escala=Math.min(1,max/Math.max(imagen.width,imagen.height));
+   const canvas=document.createElement('canvas');
+
+   canvas.width=Math.round(imagen.width*escala);
+   canvas.height=Math.round(imagen.height*escala);
+
+   const ctx=canvas.getContext('2d');
+   ctx.drawImage(imagen,0,0,canvas.width,canvas.height);
+
+   fotoTemporal=canvas.toDataURL('image/jpeg',0.75);
+
+   document.getElementById('fotoActual').innerHTML=
+   '<img class="photo" src="'+fotoTemporal+'" alt="Vista previa">';
+  };
+
+  imagen.onerror=()=>alert('No se pudo leer la fotografía.');
+  imagen.src=lector.result;
+ };
+
+ lector.readAsDataURL(archivo);
+});
+
+function eliminarFoto(){
+ if(!confirm('¿Deseas eliminar la fotografía del producto?'))return;
+
+ fotoTemporal='';
+ document.getElementById('fotoActual').textContent='Sin fotografía.';
+ document.getElementById('fotoArchivo').value='';
+}
+
+/* GUARDAR PRODUCTOS */
+
+function guardarProducto(){
+ const codigo=document.getElementById('pcodigo').value.trim();
+ const nombre=document.getElementById('pnombre').value.trim();
+ const compraTexto=document.getElementById('pcompra').value;
+ const ventaTexto=document.getElementById('pprecio').value;
+ const existenciaTexto=document.getElementById('pexistencia').value;
+
+ const compra=Number(compraTexto);
+ const precio=Number(ventaTexto);
+ const existencia=Number(existenciaTexto);
+
+ if(!codigo||!nombre||compraTexto===''||ventaTexto===''||
+ existenciaTexto===''||!Number.isFinite(compra)||compra<0||
+ !Number.isFinite(precio)||precio<0||
+ !Number.isInteger(existencia)||existencia<0){
+  alert('Completa correctamente el código, nombre, precios y existencia.');
+  return;
+ }
+
+ let p=productos.find(x=>x.codigo===codigo);
+
+ if(p){
+  if(!confirm(
+   'El producto ya existe.\n\n'+
+   'Nombre: '+p.nombre+'\n'+
+   'Precio anterior: '+dinero(p.precio)+
+   '\n\n¿Deseas actualizar sus datos?'
+  ))return;
+
+  if(!Array.isArray(p.historial))p.historial=[];
+
+  p.historial.push({
+   compra:p.compra||0,
+   precio:p.precio,
+   fecha:new Date().toISOString()
+  });
+
+  p.nombre=nombre;
+  p.marca=document.getElementById('pmarca').value.trim();
+  p.presentacion=document.getElementById('ppresentacion').value.trim();
+  p.categoria=document.getElementById('pcategoria').value.trim();
+  p.descripcion=document.getElementById('pdescripcion').value.trim();
+  p.compra=compra;
+  p.precio=precio;
+  p.existencia=existencia;
+
+ }else{
+  p={
+   codigo:codigo,
+   nombre:nombre,
+   marca:document.getElementById('pmarca').value.trim(),
+   presentacion:document.getElementById('ppresentacion').value.trim(),
+   categoria:document.getElementById('pcategoria').value.trim(),
+   descripcion:document.getElementById('pdescripcion').value.trim(),
+   compra:compra,
+   precio:precio,
+   existencia:existencia,
+   historial:[]
+  };
+
+  productos.push(p);
+ }
+
+ // Si no se seleccionó una nueva foto,
+ // se conserva la fotografía anterior.
+ if(fotoTemporal!==null){
+  if(fotoTemporal==='')delete p.foto;
+  else p.foto=fotoTemporal;
+ }
+
+ try{
+  guardar();
+ }catch(e){
+  alert('No hay suficiente espacio para guardar los datos. Descarga un respaldo y reduce las fotografías.');
+  return;
+ }
+
+ alert('Producto guardado correctamente.');
+ nuevoProducto();
+ listarProductos();
+}
+
+/* EDITAR PRODUCTOS */
+
+function editar(c){
+ const p=productos.find(x=>x.codigo===decodeURIComponent(c));
+ if(!p)return;
+
+ document.getElementById('pcodigo').value=p.codigo;
+ document.getElementById('pnombre').value=p.nombre||'';
+ document.getElementById('pmarca').value=p.marca||'';
+ document.getElementById('ppresentacion').value=p.presentacion||'';
+ document.getElementById('pcategoria').value=p.categoria||'';
+ document.getElementById('pdescripcion').value=p.descripcion||'';
+ document.getElementById('pcompra').value=p.compra??0;
+ document.getElementById('pprecio').value=p.precio;
+ document.getElementById('pexistencia').value=p.existencia??0;
+
+ fotoTemporal=Object.hasOwn(p,'foto')?p.foto:null;
+
+ document.getElementById('fotoActual').innerHTML=p.foto?
+ '<img class="photo" src="'+p.foto+'" alt="Fotografía del producto">':
+ 'Sin fotografía registrada.';
+
+ document.getElementById('estadoProducto').textContent=
+ 'Editando producto: '+p.nombre;
+
+ calcularGanancia();
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* CATÁLOGO */
+
+function listarProductos(){
+ const q=document.getElementById('buscar').value.toLowerCase();
+
+ const arr=productos.filter(p=>
+  (p.nombre||'').toLowerCase().includes(q)||
+  (p.codigo||'').includes(q)||
+  (p.marca||'').toLowerCase().includes(q)
+ );
+
+ document.getElementById('listaProductos').innerHTML=arr.length?
+ arr.map(p=>`
+ <div class="item">
+  <div class="row">
+   ${p.foto?
+   '<img class="photo" style="width:65px;height:65px" src="'+p.foto+'" alt="">':''}
+   <div>
+    <b>${seguro(p.nombre)}</b><br>
+    <small>Código: ${seguro(p.codigo)}</small><br>
+    <small>Marca: ${seguro(p.marca||'-')}</small><br>
+    <small>Presentación: ${seguro(p.presentacion||'-')}</small><br>
+    <small>Compra: ${dinero(p.compra)}</small><br>
+    <small>Venta: ${dinero(p.precio)}</small><br>
+    <b>Ganancia: ${dinero(p.precio-(p.compra||0))}</b><br>
+    <small>Existencia: ${p.existencia??0}</small>
+   </div>
+  </div>
+  <button class="alt" onclick="editar('${encodeURIComponent(p.codigo)}')">Editar</button>
+ </div>
+ `).join(''):
+ '<p class="muted">No hay productos registrados.</p>';
+}
+
+/* IMPORTAR CATÁLOGO LOCAL */
+
+function importarCatalogo(){
+ const f=document.getElementById('catalogoArchivo').files[0];
+
+ if(!f){
+  alert('Selecciona un archivo JSON.');
+  return;
+ }
+
+ const r=new FileReader();
+
+ r.onload=()=>{
+  try{
+   const d=JSON.parse(r.result);
+   const lista=Array.isArray(d)?d:d.productos;
+
+   if(!Array.isArray(lista))throw Error();
+
+   let n=0;
+
+   lista.forEach(p=>{
+    if(!p||typeof p.codigo!=='string'||typeof p.nombre!=='string')return;
+    if(productos.some(x=>x.codigo===p.codigo))return;
+
+    productos.push({
+     codigo:p.codigo,
+     nombre:p.nombre,
+     marca:p.marca||'',
+     presentacion:p.presentacion||'',
+     categoria:p.categoria||'',
+     descripcion:p.descripcion||'',
+     compra:Number(p.compra)||0,
+     precio:Number(p.precio)||0,
+     existencia:Number(p.existencia)||0,
+     historial:[],
+     ...(p.foto?{foto:p.foto}:{})
+    });
+
+    n++;
+   });
+
+   guardar();
+   listarProductos();
+   alert(n+' productos importados correctamente.');
+
+  }catch(e){
+   alert('El archivo de catálogo no es válido.');
+  }
+ };
+
+ r.readAsText(f);
+}
+</script>
+
+ 
+<script>
+/* VENTAS Y ESCÁNER DE PRODUCTOS */
+
+function agregar(){
+ const codigo=document.getElementById('codigo').value.trim();
+ if(!codigo)return;
+
+ const p=productos.find(x=>x.codigo===codigo);
+
+ if(!p){
+  alert('Producto no registrado. Regístralo primero en Productos.');
+  document.getElementById('codigo').value='';
+  return;
+ }
+
+ if((p.existencia??0)<=0){
+  alert('Este producto no tiene existencias.');
+  return;
+ }
+
+ const existente=carrito.find(x=>x.codigo===codigo);
+
+ if(existente){
+  if(existente.cantidad>=p.existencia){
+   alert('No hay suficientes existencias.');
+   return;
+  }
+  existente.cantidad++;
+ }else{
+  carrito.push({...p,cantidad:1});
+ }
+
  document.getElementById('codigo').value='';
  dibujar();
- document.getElementById('codigo').focus();
 }
+
 function dibujar(){
- let div=document.getElementById('carrito');
- div.innerHTML=carrito.length?carrito.map((p,i)=>`
- <div class="item"><div><b>${seguro(p.nombre)}</b><br>
- <small>${p.cantidad} x ${dinero(p.precio)}</small></div>
- <div><b>${dinero(p.precio*p.cantidad)}</b><br>
- <button class="red" onclick="quitar(${i})">Quitar</button></div></div>
- `).join(''):'<p class="muted">Sin productos todavía.</p>';
+ document.getElementById('carrito').innerHTML=carrito.length?
+ carrito.map((p,i)=>`
+ <div class="item">
+  <div>
+   <b>${seguro(p.nombre)}</b><br>
+   <small>${p.cantidad} x ${dinero(p.precio)}</small>
+  </div>
+  <div>
+   <b>${dinero(p.precio*p.cantidad)}</b><br>
+   <button class="red" onclick="quitar(${i})">Quitar</button>
+  </div>
+ </div>
+ `).join(''):
+ '<p class="muted">Sin productos todavía.</p>';
+
  document.getElementById('total').textContent=dinero(
- carrito.reduce((s,p)=>s+p.precio*p.cantidad,0));
+  carrito.reduce((s,p)=>s+p.precio*p.cantidad,0)
+ );
 }
+
 function quitar(i){
  if(carrito[i].cantidad>1)carrito[i].cantidad--;
  else carrito.splice(i,1);
  dibujar();
 }
+
 function limpiar(){
  if(carrito.length&&!confirm('¿Vaciar la compra?'))return;
- carrito=[];dibujar();
+ carrito=[];
+ dibujar();
 }
+
 function cobrar(){
- if(!carrito.length){alert('No hay productos.');return}
- let total=carrito.reduce((s,p)=>s+p.precio*p.cantidad,0);
- let metodo=prompt('Total: '+dinero(total)+
- '\nEscribe 1 para EFECTIVO o 2 para TRANSFERENCIA');
+ if(!carrito.length){
+  alert('No hay productos en la compra.');
+  return;
+ }
+
+ const total=carrito.reduce((s,p)=>s+p.precio*p.cantidad,0);
+
+ let metodo=prompt(
+  'Total: '+dinero(total)+
+  '\n\nEscribe:\n1 para EFECTIVO\n2 para TRANSFERENCIA'
+ );
+
  if(metodo===null)return;
+
  metodo=metodo.trim();
+
  if(metodo!=='1'&&metodo!=='2'){
- alert('Selecciona 1 o 2.');return;
+  alert('Selecciona un método válido.');
+  return;
  }
- if(!confirm('Confirmar cobro de '+dinero(total)+' por '+
- (metodo==='1'?'EFECTIVO':'TRANSFERENCIA')+'?'))return;
+
+ // Verificar nuevamente las existencias.
+ for(const item of carrito){
+  const p=productos.find(x=>x.codigo===item.codigo);
+
+  if(!p||(p.existencia??0)<item.cantidad){
+   alert('Existencias insuficientes: '+item.nombre);
+   return;
+  }
+ }
+
+ if(!confirm('¿Confirmar cobro de '+dinero(total)+'?'))return;
+
+ for(const item of carrito){
+  const p=productos.find(x=>x.codigo===item.codigo);
+  p.existencia-=item.cantidad;
+ }
+
  ventas.unshift({
- id:Date.now().toString(),
- fecha:new Date().toISOString(),
- metodo:metodo==='1'?'Efectivo':'Transferencia',
- productos:carrito.map(p=>({...p})),total
+  id:Date.now().toString(),
+  fecha:new Date().toISOString(),
+  metodo:metodo==='1'?'Efectivo':'Transferencia',
+  productos:carrito.map(p=>({...p})),
+  total
  });
- guardar();
- alert('VENTA REGISTRADA\n'+dinero(total)+'\n'+
- (metodo==='1'?'Efectivo':'Transferencia'));
- carrito=[];dibujar();
-}
-function guardarProducto(){
- let codigo=document.getElementById('pcodigo').value.trim();
- let nombre=document.getElementById('pnombre').value.trim();
- let campo=document.getElementById('pprecio').value;
- let precio=Number(campo);
- if(!codigo||!nombre||campo===''||!Number.isFinite(precio)||precio<0){
- alert('Completa los datos correctamente.');return;
+
+ try{
+  guardar();
+ }catch(e){
+  alert('No se pudo guardar la venta. Revisa el espacio disponible.');
+  return;
  }
- let p=productos.find(x=>x.codigo===codigo);
- if(p){
- if(!confirm('Producto: '+p.nombre+'\nPrecio anterior: '+dinero(p.precio)+
- '\nNuevo precio: '+dinero(precio)+'\n\n¿Confirmas actualización?'))return;
- if(!Array.isArray(p.historial))p.historial=[];
- p.historial.push({precio:p.precio,fecha:new Date().toISOString()});
- p.nombre=nombre;p.precio=precio;
- }else productos.push({codigo,nombre,precio,historial:[]});
- guardar();
- ['pcodigo','pnombre','pprecio'].forEach(x=>document.getElementById(x).value='');
- listarProductos();
- alert('Producto guardado.');
+
+ alert('VENTA REGISTRADA\n'+dinero(total));
+ carrito=[];
+ dibujar();
 }
-function listarProductos(){
- let q=document.getElementById('buscar').value.toLowerCase();
- let arr=productos.filter(p=>p.nombre.toLowerCase().includes(q)||p.codigo.includes(q));
- document.getElementById('listaProductos').innerHTML=arr.length?
- arr.map(p=>`<div class="item"><div><b>${seguro(p.nombre)}</b><br>
- <small>${seguro(p.codigo)}</small><br><b>${dinero(p.precio)}</b></div>
- <button class="alt" onclick="editar('${encodeURIComponent(p.codigo)}')">Editar</button>
- </div>`).join(''):'<p class="muted">No hay productos.</p>';
-}
-function editar(c){
- let p=productos.find(x=>x.codigo===decodeURIComponent(c));
- if(!p)return;
- let nombre=prompt('Nombre:',p.nombre);if(nombre===null)return;
- let precio=prompt('Nuevo precio:',p.precio);if(precio===null)return;
- if(!nombre.trim()||precio.trim()===''||!Number.isFinite(Number(precio))||Number(precio)<0){
- alert('Datos incorrectos.');return;
- }
- if(!Array.isArray(p.historial))p.historial=[];
- p.historial.push({precio:p.precio,fecha:new Date().toISOString()});
- p.nombre=nombre.trim();p.precio=Number(precio);
- guardar();listarProductos();
-}
-function fechaLocal(fecha){
- return new Date(fecha).toLocaleString('es-MX');
-}
+
+/* HISTORIAL Y CORTE DE CAJA */
+
 function listarVentas(){
- let hoy=new Date().toLocaleDateString('en-CA');
- let dia=ventas.filter(v=>new Date(v.fecha).toLocaleDateString('en-CA')===hoy);
- let total=dia.reduce((s,v)=>s+v.total,0);
- let efectivo=dia.filter(v=>v.metodo==='Efectivo').reduce((s,v)=>s+v.total,0);
- let transferencia=dia.filter(v=>v.metodo==='Transferencia').reduce((s,v)=>s+v.total,0);
- document.getElementById('corteTotal').textContent=dinero(total);
- document.getElementById('corteEfectivo').textContent=dinero(efectivo);
- document.getElementById('corteTransferencia').textContent=dinero(transferencia);
+ const hoy=new Date().toLocaleDateString('en-CA');
+
+ const dia=ventas.filter(v=>
+  new Date(v.fecha).toLocaleDateString('en-CA')===hoy
+ );
+
+ const suma=metodo=>dia
+  .filter(v=>v.metodo===metodo)
+  .reduce((s,v)=>s+Number(v.total),0);
+
+ document.getElementById('corteTotal').textContent=
+ dinero(dia.reduce((s,v)=>s+Number(v.total),0));
+
+ document.getElementById('corteEfectivo').textContent=dinero(suma('Efectivo'));
+ document.getElementById('corteTransferencia').textContent=dinero(suma('Transferencia'));
  document.getElementById('corteCantidad').textContent=dia.length;
+
  document.getElementById('listaVentas').innerHTML=ventas.length?
- ventas.map(v=>`<div class="item"><div><b>${fechaLocal(v.fecha)}</b><br>
- <small>${seguro(v.metodo)} · ${v.productos.length} tipos</small></div>
- <b>${dinero(v.total)}</b></div>`).join(''):
+ ventas.map(v=>`
+ <div class="item">
+  <div>
+   <b>${new Date(v.fecha).toLocaleString('es-MX')}</b><br>
+   <small>${seguro(v.metodo)} · ${v.productos.length} tipos de productos</small>
+  </div>
+  <b>${dinero(v.total)}</b>
+ </div>
+ `).join(''):
  '<p class="muted">Todavía no hay ventas.</p>';
 }
+
+/* RESPALDO */
+
 function exportar(){
- guardar();
- let datos={app:'Mi Tiendita',version:2,fecha:new Date().toISOString(),
- productos,ventas};
- let blob=new Blob([JSON.stringify(datos,null,2)],{type:'application/json'});
- let url=URL.createObjectURL(blob);
- let a=document.createElement('a');
- a.href=url;a.download='mi-tiendita-respaldo-'+
- new Date().toISOString().slice(0,10)+'.json';
- a.click();URL.revokeObjectURL(url);
-}
-function restaurar(){
- let f=document.getElementById('archivo').files[0];
- if(!f){alert('Selecciona un archivo.');return}
- let r=new FileReader();
- r.onload=()=>{
  try{
- let d=JSON.parse(r.result);
- if(d.app!=='Mi Tiendita'||d.version!==2||
- !Array.isArray(d.productos)||!Array.isArray(d.ventas)||
- !d.productos.every(p=>p&&typeof p.codigo==='string'&&
- typeof p.nombre==='string'&&Number.isFinite(p.precio))||
- !d.ventas.every(v=>v&&Array.isArray(v.productos)&&Number.isFinite(v.total))){
- throw Error('Formato inválido');
+  guardar();
+
+  const datos={
+   app:'Mi Tiendita',
+   version:3,
+   fecha:new Date().toISOString(),
+   productos:productos,
+   ventas:ventas
+  };
+
+  const blob=new Blob(
+   [JSON.stringify(datos)],
+   {type:'application/json'}
+  );
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+
+  a.href=url;
+  a.download='mi-tiendita-respaldo-'+
+  new Date().toISOString().slice(0,10)+'.json';
+
+  a.click();
+
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+
+ }catch(e){
+  alert('No se pudo crear el respaldo.');
  }
- if(!confirm('Se reemplazarán los datos actuales. ¿Continuar?'))return;
- productos=d.productos;ventas=d.ventas;guardar();
- alert('Respaldo restaurado correctamente.');
- estado();listarProductos();listarVentas();
- }catch(e){alert('El archivo no es un respaldo válido de Mi Tiendita 2.0.')}
+}
+
+function restaurar(){
+ const f=document.getElementById('archivo').files[0];
+
+ if(!f){
+  alert('Selecciona un archivo de respaldo.');
+  return;
+ }
+
+ const r=new FileReader();
+
+ r.onload=()=>{
+  try{
+   const d=JSON.parse(r.result);
+
+   if(
+    d.app!=='Mi Tiendita'||
+    ![2,3].includes(d.version)||
+    !Array.isArray(d.productos)||
+    !Array.isArray(d.ventas)||
+    !d.productos.every(p=>
+     p&&typeof p.codigo==='string'&&
+     typeof p.nombre==='string'&&
+     Number.isFinite(Number(p.precio))
+    )||
+    !d.ventas.every(v=>
+     v&&Array.isArray(v.productos)&&
+     Number.isFinite(Number(v.total))
+    )
+   ){
+    throw Error('Formato inválido');
+   }
+
+   if(!confirm(
+    'Se reemplazarán los datos actuales por los del respaldo. ¿Continuar?'
+   ))return;
+
+   productos=d.productos.map(p=>({
+    ...p,
+    compra:Number(p.compra)||0,
+    existencia:Number(p.existencia)||0,
+    historial:Array.isArray(p.historial)?p.historial:[]
+   }));
+
+   ventas=d.ventas;
+
+   guardar();
+   listarProductos();
+   listarVentas();
+   estado();
+
+   alert('Respaldo restaurado correctamente.');
+
+  }catch(e){
+   alert('El archivo no es un respaldo válido de Mi Tiendita.');
+  }
  };
+
  r.readAsText(f);
 }
+
 function estado(){
  document.getElementById('estadoDatos').textContent=
- productos.length+' productos registrados · '+ventas.length+
- ' ventas guardadas en este dispositivo.';
+ productos.length+' productos registrados · '+
+ ventas.length+' ventas guardadas en este dispositivo.';
 }
-async function abrirCamara(){
+
+/* ESCÁNER DE CÓDIGOS DE BARRAS */
+
+async function abrirCamara(destino='venta'){
+ destinoEscaner=destino;
+
  if(!('BarcodeDetector' in window)){
- alert('Tu navegador no ofrece lectura de códigos compatible. Usa el campo manual o un lector Bluetooth.');
- return;
+  alert(
+   'Tu navegador no es compatible con el escáner integrado. '+
+   'Puedes escribir el código o utilizar un lector Bluetooth.'
+  );
+  return;
  }
+
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+  alert('La cámara necesita que abras la aplicación mediante HTTPS.');
+  return;
+ }
+
  try{
- detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']});
- stream=await navigator.mediaDevices.getUserMedia({
- video:{facingMode:'environment'},audio:false});
- let v=document.getElementById('video');
- v.srcObject=stream;
- document.getElementById('camaraBox').classList.remove('hidden');
- escaneando=true;leerCamara();
- }catch(e){alert('No se pudo abrir la cámara. Comprueba los permisos.');}
+  detector=new BarcodeDetector({
+   formats:['ean_13','ean_8','upc_a','upc_e','code_128']
+  });
+
+  stream=await navigator.mediaDevices.getUserMedia({
+   video:{facingMode:'environment'},
+   audio:false
+  });
+
+  const video=document.getElementById('video');
+
+  video.srcObject=stream;
+
+  document.getElementById('camaraBox').classList.remove('hidden');
+
+  escaneando=true;
+
+  await video.play();
+
+  leerCamara();
+
+ }catch(e){
+  cerrarCamara();
+  alert('No se pudo abrir la cámara. Comprueba los permisos.');
+ }
 }
+
 async function leerCamara(){
  if(!escaneando)return;
+
  try{
- let r=await detector.detect(document.getElementById('video'));
- if(r.length){
- document.getElementById('codigo').value=r[0].rawValue;
- cerrarCamara();agregar();return;
- }
+  const video=document.getElementById('video');
+  const resultados=await detector.detect(video);
+
+  if(resultados.length){
+   const codigo= resultados[0].rawValue;
+
+   cerrarCamara();
+
+   if(destinoEscaner==='producto'){
+    const p=productos.find(x=>x.codigo===codigo);
+
+    if(p){
+     editar(encodeURIComponent(codigo));
+     document.getElementById('estadoProducto').textContent=
+     'Producto encontrado en tu catálogo local.';
+    }else{
+     nuevoProducto();
+     document.getElementById('pcodigo').value=codigo;
+     document.getElementById('estadoProducto').textContent=
+     'Código nuevo. Completa las características del producto.';
+    }
+
+   }else{
+    document.getElementById('codigo').value=codigo;
+    agregar();
+   }
+
+   return;
+  }
+
  }catch(e){}
- if(escaneando)setTimeout(leerCamara,250);
+
+ if(escaneando){
+  setTimeout(leerCamara,300);
+ }
 }
+
 function cerrarCamara(){
  escaneando=false;
- if(stream)stream.getTracks().forEach(t=>t.stop());
+
+ if(stream){
+  stream.getTracks().forEach(t=>t.stop());
+ }
+
  stream=null;
- document.getElementById('camaraBox').classList.add('hidden');
+
+ const video=document.getElementById('video');
+
+ if(video)video.srcObject=null;
+
+ const caja=document.getElementById('camaraBox');
+
+ if(caja)caja.classList.add('hidden');
 }
+
+/* INICIO DE LA APLICACIÓN */
+
 dibujar();
+listarProductos();
+
 if('serviceWorker' in navigator){
- window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+ window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+ });
 }
+
 </script>
 </body>
 </html>
