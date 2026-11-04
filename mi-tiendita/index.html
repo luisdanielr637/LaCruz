@@ -781,16 +781,52 @@ function estado(){
 
 /* ESCÁNER DE CÓDIGOS DE BARRAS */
 
+
 async function abrirCamara(destino='venta'){
+
  destinoEscaner=destino;
 
  if(!('BarcodeDetector' in window)){
-  alert(
-   'Tu navegador no es compatible con el escáner integrado. '+
-   'Puedes escribir el código o utilizar un lector Bluetooth.'
-  );
+  alert('Tu navegador no es compatible con el escáner.');
   return;
  }
+
+ try{
+
+  if(!detector){
+   detector=new BarcodeDetector({
+    formats:['ean_13','ean_8','upc_a','upc_e','code_128']
+   });
+  }
+
+  stream=await navigator.mediaDevices.getUserMedia({
+   video:{
+    facingMode:{ideal:'environment'}
+   },
+   audio:false
+  });
+
+  const video=document.getElementById('video');
+
+  video.srcObject=stream;
+
+  document.getElementById('camaraBox').classList.remove('hidden');
+
+  escaneando=true;
+
+  await video.play();
+
+  leerCamara();
+
+ }catch(error){
+
+  cerrarCamara();
+
+  alert('Error al abrir la cámara: '+error.message);
+
+ }
+
+}
 
  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
   alert('La cámara necesita que abras la aplicación mediante HTTPS.');
@@ -837,26 +873,38 @@ async function leerCamara(){
 
    cerrarCamara();
 
-   if(destinoEscaner==='producto'){
-    const p=productos.find(x=>x.codigo===codigo);
 
-    if(p){
-     editar(encodeURIComponent(codigo));
-     document.getElementById('estadoProducto').textContent=
-     'Producto encontrado en tu catálogo local.';
-    }else{
-     nuevoProducto();
-     document.getElementById('pcodigo').value=codigo;
-     document.getElementById('estadoProducto').textContent=
-     'Código nuevo. Completa las características del producto.';
-    }
+if(destinoEscaner==='producto'){
 
-   }else{
-    document.getElementById('codigo').value=codigo;
-    agregar();
-   }
+ const p=productos.find(x=>x.codigo===codigo);
 
-   return;
+ if(p){
+
+  editar(encodeURIComponent(codigo));
+
+  document.getElementById('estadoProducto').textContent=
+  'Producto encontrado en tu catálogo local.';
+
+ }else{
+
+  nuevoProducto();
+
+  document.getElementById('pcodigo').value=codigo;
+
+  document.getElementById('estadoProducto').textContent=
+  'Código nuevo. Completa los datos del producto.';
+
+ }
+
+}else{
+
+ document.getElementById('codigo').value=codigo;
+
+ agregar();
+
+}
+
+return;
   }
 
  }catch(e){}
