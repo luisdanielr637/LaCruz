@@ -1,5 +1,5 @@
 
-const CACHE = 'mi-tiendita-v3';
+const CACHE = 'mi-tiendita-v4';
 
 const ARCHIVOS = [
   './',
