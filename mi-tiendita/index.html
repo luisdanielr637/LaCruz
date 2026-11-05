@@ -6,8 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#14532d">
 <link rel="manifest" href="manifest.webmanifest">
-<title>Mi Tiendita 3.0</title>
-
+<title>Mi Tiendita</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f1f5f2;color:#17251c;font-family:Arial;padding-bottom:30px}
@@ -16,138 +15,73 @@ header small{display:block;font-size:12px;font-weight:normal;margin-top:5px}
 nav{display:flex;background:white;position:sticky;top:0;z-index:3;overflow:auto}
 nav button{flex:1;min-width:65px;padding:13px 4px;border:0;background:white;font-size:12px}
 nav button.active{color:#15803d;border-bottom:3px solid #15803d;font-weight:bold}
-main{max-width:650px;margin:auto;padding:13px}
+main{max-width:600px;margin:auto;padding:13px}
 .panel{background:white;padding:15px;border-radius:14px;margin-bottom:13px;box-shadow:0 2px 8px #0000000b}
 h2{font-size:19px;margin:0 0 13px}
-input,select,textarea{width:100%;padding:13px;border:1px solid #cbd5ce;border-radius:9px;font-size:16px;margin:5px 0 12px;background:white}
+input,select{width:100%;padding:13px;border:1px solid #cbd5ce;border-radius:9px;font-size:16px;margin:5px 0 12px;background:white}
 label{font-size:13px;color:#64746a}
 button{cursor:pointer}
-.btn{width:100%;border:0;border-radius:10px;padding:14px;background:#15803d;color:white;font-size:15px;font-weight:bold;margin:4px 0}
+.btn{width:100%;border:0;border-radius:10px;padding:14px;background:#15803d;color:white;font-size:16px;font-weight:bold;margin:4px 0}
 .alt{background:#e5eee7;color:#14532d}
 .red{background:#fee2e2;color:#991b1b}
 .total{display:flex;justify-content:space-between;align-items:center;padding:14px 0;font-weight:bold}
-.total strong{font-size:27px;color:#15803d}
+.total strong,.big{font-size:30px;color:#15803d}
 .muted{font-size:13px;color:#64746a}
-.item{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:12px 0;border-bottom:1px solid #eee}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #eee}
 .item button{border:0;border-radius:7px;padding:9px}
-.hidden{display:none!important}
-video{width:100%;border-radius:10px;background:#111;min-height:180px}
-.photo{width:110px;height:110px;object-fit:contain;background:#f1f5f2;border-radius:12px}
-.row{display:flex;gap:10px;align-items:center}
-.row>*{min-width:0}
-.row img{flex-shrink:0}
-small{overflow-wrap:anywhere}
+.hidden{display:none}
+video{width:100%;border-radius:10px;background:#111}
+.tag{font-size:11px;background:#e5eee7;padding:4px 7px;border-radius:7px}
 </style>
 </head>
-
 <body>
 <header>🛒 Mi Tiendita
-<small>Productos, precios, inventario y caja</small>
-</header>
-
+<small>Precios, ventas y caja</small></header>
 <nav>
 <button class="active" onclick="tab('venta',this)">Vender</button>
 <button onclick="tab('productos',this)">Productos</button>
 <button onclick="tab('ventas',this)">Ventas</button>
 <button onclick="tab('respaldo',this)">Respaldo</button>
 </nav>
-
 <main>
 
 <section id="venta">
 <div class="panel">
 <h2>Escanear producto</h2>
-<input id="codigo" placeholder="Código de barras" autocomplete="off"
-onkeydown="if(event.key==='Enter')agregar()">
+<input id="codigo" placeholder="Escanea o escribe el código"
+autocomplete="off" onkeydown="if(event.key==='Enter')agregar()">
 <button class="btn" onclick="agregar()">AGREGAR PRODUCTO</button>
-<button class="btn alt" onclick="abrirCamara('venta')">📷 ESCANEAR CON CÁMARA</button>
+<button class="btn alt" onclick="abrirCamara()">📷 ESCANEAR CON CÁMARA</button>
+<div id="camaraBox" class="hidden">
+<video id="video" autoplay playsinline></video>
+<button class="btn red" onclick="cerrarCamara()">Cerrar cámara</button>
 </div>
-
-<div class="panel hidden" id="camaraBox">
-<h2>Escáner de códigos</h2>
-<video id="video" autoplay playsinline muted></video>
-<p class="muted" id="estadoCamara">Coloca el código de barras frente a la cámara.</p>
-<button class="btn red" onclick="cerrarCamara()">CERRAR CÁMARA</button>
 </div>
-
 <div class="panel">
 <h2>Compra del cliente</h2>
 <div id="carrito"><p class="muted">Sin productos todavía.</p></div>
 <div class="total"><span>TOTAL</span><strong id="total">$0.00</strong></div>
-<button class="btn" onclick="cobrar()">💰 COBRAR</button>
-<button class="btn alt" onclick="limpiar()">NUEVA COMPRA</button>
+<button class="btn" onclick="cobrar()">💵 COBRAR</button>
+<button class="btn alt" onclick="limpiar()">Nueva compra</button>
 </div>
 </section>
 
 <section id="productos" class="hidden">
 <div class="panel">
 <h2>Registrar o actualizar producto</h2>
-
 <label>Código de barras</label>
-<input id="pcodigo" placeholder="Código del producto">
-
-<button class="btn alt" onclick="abrirCamara('producto')">📷 ESCANEAR CÓDIGO</button>
-
+<input id="pcodigo" placeholder="Código">
 <label>Nombre del producto</label>
 <input id="pnombre" placeholder="Ej. Coca-Cola 600 ml">
-
-<label>Marca</label>
-<input id="pmarca" placeholder="Marca">
-
-<label>Presentación</label>
-<input id="ppresentacion" placeholder="Ej. 600 ml, 1 kg">
-
-<label>Categoría</label>
-<input id="pcategoria" placeholder="Ej. Bebidas">
-
-<label>Descripción o características</label>
-<textarea id="pdescripcion" rows="3" placeholder="Información del producto"></textarea>
-
-<label>Precio de compra ($)</label>
-<input id="pcompra" type="number" min="0" step="0.01" placeholder="0.00">
-
-<label>Precio de venta ($)</label>
-<input id="pprecio" type="number" min="0" step="0.01" placeholder="0.00">
-
-<label>Existencia actual</label>
-<input id="pexistencia" type="number" min="0" step="1" value="0">
-
-<div class="item">
-<span>Ganancia por unidad</span>
-<b id="pganancia">$0.00</b>
-</div>
-
-<div class="item">
-<span>Margen de ganancia</span>
-<b id="pmargen">0%</b>
-</div>
-
-<h2 style="margin-top:18px">Fotografía del producto</h2>
-<div id="fotoActual" class="muted">Sin fotografía registrada.</div>
-
-<label>Seleccionar o tomar fotografía</label>
-<input type="file" id="fotoArchivo" accept="image/*" capture="environment">
-
-<button class="btn alt" onclick="seleccionarFoto()">AGREGAR / ACTUALIZAR FOTO</button>
-<button class="btn red" onclick="eliminarFoto()">ELIMINAR FOTO</button>
-
+<label>Precio de venta en pesos</label>
+<input id="pprecio" type="number" min="0" step="0.01" placeholder="20.00">
 <button class="btn" onclick="guardarProducto()">GUARDAR PRODUCTO</button>
-<button class="btn alt" onclick="nuevoProducto()">LIMPIAR FORMULARIO</button>
-
-<p id="estadoProducto" class="muted"></p>
+<p class="muted">Si el código ya existe, podrás confirmar la actualización del precio.</p>
 </div>
-
 <div class="panel">
-<h2>Catálogo de productos</h2>
-<input id="buscar" placeholder="Buscar por nombre, marca o código" oninput="listarProductos()">
+<h2>Catálogo de precios</h2>
+<input id="buscar" placeholder="Buscar producto o código" oninput="listarProductos()">
 <div id="listaProductos"></div>
-</div>
-
-<div class="panel">
-<h2>Importar catálogo</h2>
-<p class="muted">Permite agregar productos desde un archivo JSON guardado en tu dispositivo.</p>
-<input type="file" id="catalogoArchivo" accept=".json,application/json">
-<button class="btn alt" onclick="importarCatalogo()">IMPORTAR CATÁLOGO</button>
 </div>
 </section>
 
@@ -159,7 +93,6 @@ onkeydown="if(event.key==='Enter')agregar()">
 <div class="item"><span>Transferencias</span><b id="corteTransferencia">$0.00</b></div>
 <div class="item"><span>Número de ventas</span><b id="corteCantidad">0</b></div>
 </div>
-
 <div class="panel">
 <h2>Historial de ventas</h2>
 <div id="listaVentas"></div>
@@ -168,22 +101,249 @@ onkeydown="if(event.key==='Enter')agregar()">
 
 <section id="respaldo" class="hidden">
 <div class="panel">
-<h2>Crear respaldo completo</h2>
-<p class="muted">Guarda productos, fotografías, precios, existencias e historial de ventas.</p>
-<button class="btn" onclick="exportar()">DESCARGAR RESPALDO</button>
+<h2>Crear respaldo</h2>
+<p class="muted">Guarda todos tus productos, precios, cambios de precio y ventas en un archivo JSON.</p>
+<button class="btn" onclick="exportar()">⬇ DESCARGAR RESPALDO</button>
 </div>
-
 <div class="panel">
-<h2>Restaurar respaldo</h2>
+<h2>Restaurar información</h2>
+<p class="muted">Selecciona un respaldo creado anteriormente. La restauración reemplazará los datos actuales.</p>
 <input type="file" id="archivo" accept=".json,application/json">
-<button class="btn alt" onclick="restaurar()">RESTAURAR INFORMACIÓN</button>
+<button class="btn alt" onclick="restaurar()">RESTAURAR RESPALDO</button>
 </div>
-
 <div class="panel">
 <h2>Almacenamiento</h2>
-<p id="estadoDatos" class="muted"></p>
-<button class="btn alt" onclick="estado()">ACTUALIZAR INFORMACIÓN</button>
+<p class="muted" id="estadoDatos"></p>
+<button class="btn alt" onclick="estado()">Actualizar información</button>
 </div>
 </section>
 
 </main>
+<script>
+const leer=(k,d)=>{
+ try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}
+};
+let productos=leer('mt_productos',[]);
+let ventas=leer('mt_ventas',[]);
+let carrito=[];
+let stream=null,detector=null,escaneando=false;
+
+const dinero=n=>Number(n).toLocaleString('es-MX',
+{style:'currency',currency:'MXN'});
+
+function guardar(){
+ localStorage.setItem('mt_productos',JSON.stringify(productos));
+ localStorage.setItem('mt_ventas',JSON.stringify(ventas));
+}
+function seguro(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+function tab(id,btn){
+ cerrarCamara();
+ ['venta','productos','ventas','respaldo'].forEach(x=>
+ document.getElementById(x).classList.toggle('hidden',x!==id));
+ document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+ btn.classList.add('active');
+ if(id==='productos')listarProductos();
+ if(id==='ventas')listarVentas();
+ if(id==='respaldo')estado();
+}
+function agregar(){
+ let codigo=document.getElementById('codigo').value.trim();
+ if(!codigo)return;
+ let p=productos.find(x=>x.codigo===codigo);
+ if(!p){
+ alert('Producto no registrado. Regístralo en Productos.');
+ return;
+ }
+ let existente=carrito.find(x=>x.codigo===codigo);
+ if(existente)existente.cantidad++;
+ else carrito.push({...p,cantidad:1});
+ document.getElementById('codigo').value='';
+ dibujar();
+ document.getElementById('codigo').focus();
+}
+function dibujar(){
+ let div=document.getElementById('carrito');
+ div.innerHTML=carrito.length?carrito.map((p,i)=>`
+ <div class="item"><div><b>${seguro(p.nombre)}</b><br>
+ <small>${p.cantidad} x ${dinero(p.precio)}</small></div>
+ <div><b>${dinero(p.precio*p.cantidad)}</b><br>
+ <button class="red" onclick="quitar(${i})">Quitar</button></div></div>
+ `).join(''):'<p class="muted">Sin productos todavía.</p>';
+ document.getElementById('total').textContent=dinero(
+ carrito.reduce((s,p)=>s+p.precio*p.cantidad,0));
+}
+function quitar(i){
+ if(carrito[i].cantidad>1)carrito[i].cantidad--;
+ else carrito.splice(i,1);
+ dibujar();
+}
+function limpiar(){
+ if(carrito.length&&!confirm('¿Vaciar la compra?'))return;
+ carrito=[];dibujar();
+}
+function cobrar(){
+ if(!carrito.length){alert('No hay productos.');return}
+ let total=carrito.reduce((s,p)=>s+p.precio*p.cantidad,0);
+ let metodo=prompt('Total: '+dinero(total)+
+ '\nEscribe 1 para EFECTIVO o 2 para TRANSFERENCIA');
+ if(metodo===null)return;
+ metodo=metodo.trim();
+ if(metodo!=='1'&&metodo!=='2'){
+ alert('Selecciona 1 o 2.');return;
+ }
+ if(!confirm('Confirmar cobro de '+dinero(total)+' por '+
+ (metodo==='1'?'EFECTIVO':'TRANSFERENCIA')+'?'))return;
+ ventas.unshift({
+ id:Date.now().toString(),
+ fecha:new Date().toISOString(),
+ metodo:metodo==='1'?'Efectivo':'Transferencia',
+ productos:carrito.map(p=>({...p})),total
+ });
+ guardar();
+ alert('VENTA REGISTRADA\n'+dinero(total)+'\n'+
+ (metodo==='1'?'Efectivo':'Transferencia'));
+ carrito=[];dibujar();
+}
+function guardarProducto(){
+ let codigo=document.getElementById('pcodigo').value.trim();
+ let nombre=document.getElementById('pnombre').value.trim();
+ let campo=document.getElementById('pprecio').value;
+ let precio=Number(campo);
+ if(!codigo||!nombre||campo===''||!Number.isFinite(precio)||precio<0){
+ alert('Completa los datos correctamente.');return;
+ }
+ let p=productos.find(x=>x.codigo===codigo);
+ if(p){
+ if(!confirm('Producto: '+p.nombre+'\nPrecio anterior: '+dinero(p.precio)+
+ '\nNuevo precio: '+dinero(precio)+'\n\n¿Confirmas actualización?'))return;
+ if(!Array.isArray(p.historial))p.historial=[];
+ p.historial.push({precio:p.precio,fecha:new Date().toISOString()});
+ p.nombre=nombre;p.precio=precio;
+ }else productos.push({codigo,nombre,precio,historial:[]});
+ guardar();
+ ['pcodigo','pnombre','pprecio'].forEach(x=>document.getElementById(x).value='');
+ listarProductos();
+ alert('Producto guardado.');
+}
+function listarProductos(){
+ let q=document.getElementById('buscar').value.toLowerCase();
+ let arr=productos.filter(p=>p.nombre.toLowerCase().includes(q)||p.codigo.includes(q));
+ document.getElementById('listaProductos').innerHTML=arr.length?
+ arr.map(p=>`<div class="item"><div><b>${seguro(p.nombre)}</b><br>
+ <small>${seguro(p.codigo)}</small><br><b>${dinero(p.precio)}</b></div>
+ <button class="alt" onclick="editar('${encodeURIComponent(p.codigo)}')">Editar</button>
+ </div>`).join(''):'<p class="muted">No hay productos.</p>';
+}
+function editar(c){
+ let p=productos.find(x=>x.codigo===decodeURIComponent(c));
+ if(!p)return;
+ let nombre=prompt('Nombre:',p.nombre);if(nombre===null)return;
+ let precio=prompt('Nuevo precio:',p.precio);if(precio===null)return;
+ if(!nombre.trim()||precio.trim()===''||!Number.isFinite(Number(precio))||Number(precio)<0){
+ alert('Datos incorrectos.');return;
+ }
+ if(!Array.isArray(p.historial))p.historial=[];
+ p.historial.push({precio:p.precio,fecha:new Date().toISOString()});
+ p.nombre=nombre.trim();p.precio=Number(precio);
+ guardar();listarProductos();
+}
+function fechaLocal(fecha){
+ return new Date(fecha).toLocaleString('es-MX');
+}
+function listarVentas(){
+ let hoy=new Date().toLocaleDateString('en-CA');
+ let dia=ventas.filter(v=>new Date(v.fecha).toLocaleDateString('en-CA')===hoy);
+ let total=dia.reduce((s,v)=>s+v.total,0);
+ let efectivo=dia.filter(v=>v.metodo==='Efectivo').reduce((s,v)=>s+v.total,0);
+ let transferencia=dia.filter(v=>v.metodo==='Transferencia').reduce((s,v)=>s+v.total,0);
+ document.getElementById('corteTotal').textContent=dinero(total);
+ document.getElementById('corteEfectivo').textContent=dinero(efectivo);
+ document.getElementById('corteTransferencia').textContent=dinero(transferencia);
+ document.getElementById('corteCantidad').textContent=dia.length;
+ document.getElementById('listaVentas').innerHTML=ventas.length?
+ ventas.map(v=>`<div class="item"><div><b>${fechaLocal(v.fecha)}</b><br>
+ <small>${seguro(v.metodo)} · ${v.productos.length} tipos</small></div>
+ <b>${dinero(v.total)}</b></div>`).join(''):
+ '<p class="muted">Todavía no hay ventas.</p>';
+}
+function exportar(){
+ guardar();
+ let datos={app:'Mi Tiendita',version:2,fecha:new Date().toISOString(),
+ productos,ventas};
+ let blob=new Blob([JSON.stringify(datos,null,2)],{type:'application/json'});
+ let url=URL.createObjectURL(blob);
+ let a=document.createElement('a');
+ a.href=url;a.download='mi-tiendita-respaldo-'+
+ new Date().toISOString().slice(0,10)+'.json';
+ a.click();URL.revokeObjectURL(url);
+}
+function restaurar(){
+ let f=document.getElementById('archivo').files[0];
+ if(!f){alert('Selecciona un archivo.');return}
+ let r=new FileReader();
+ r.onload=()=>{
+ try{
+ let d=JSON.parse(r.result);
+ if(d.app!=='Mi Tiendita'||d.version!==2||
+ !Array.isArray(d.productos)||!Array.isArray(d.ventas)||
+ !d.productos.every(p=>p&&typeof p.codigo==='string'&&
+ typeof p.nombre==='string'&&Number.isFinite(p.precio))||
+ !d.ventas.every(v=>v&&Array.isArray(v.productos)&&Number.isFinite(v.total))){
+ throw Error('Formato inválido');
+ }
+ if(!confirm('Se reemplazarán los datos actuales. ¿Continuar?'))return;
+ productos=d.productos;ventas=d.ventas;guardar();
+ alert('Respaldo restaurado correctamente.');
+ estado();listarProductos();listarVentas();
+ }catch(e){alert('El archivo no es un respaldo válido de Mi Tiendita 2.0.')}
+ };
+ r.readAsText(f);
+}
+function estado(){
+ document.getElementById('estadoDatos').textContent=
+ productos.length+' productos registrados · '+ventas.length+
+ ' ventas guardadas en este dispositivo.';
+}
+async function abrirCamara(){
+ if(!('BarcodeDetector' in window)){
+ alert('Tu navegador no ofrece lectura de códigos compatible. Usa el campo manual o un lector Bluetooth.');
+ return;
+ }
+ try{
+ detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']});
+ stream=await navigator.mediaDevices.getUserMedia({
+ video:{facingMode:'environment'},audio:false});
+ let v=document.getElementById('video');
+ v.srcObject=stream;
+ document.getElementById('camaraBox').classList.remove('hidden');
+ escaneando=true;leerCamara();
+ }catch(e){alert('No se pudo abrir la cámara. Comprueba los permisos.');}
+}
+async function leerCamara(){
+ if(!escaneando)return;
+ try{
+ let r=await detector.detect(document.getElementById('video'));
+ if(r.length){
+ document.getElementById('codigo').value=r[0].rawValue;
+ cerrarCamara();agregar();return;
+ }
+ }catch(e){}
+ if(escaneando)setTimeout(leerCamara,250);
+}
+function cerrarCamara(){
+ escaneando=false;
+ if(stream)stream.getTracks().forEach(t=>t.stop());
+ stream=null;
+ document.getElementById('camaraBox').classList.add('hidden');
+}
+dibujar();
+if('serviceWorker' in navigator){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
