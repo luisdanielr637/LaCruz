@@ -35,7 +35,7 @@ video{width:100%;border-radius:10px;background:#111}
 </style>
 </head>
 <body>
-<header>🛒 Mi Tiendita
+<header>馃洅 Mi Tiendita
 <small>Precios, ventas y caja</small></header>
 <nav>
 <button class="active" onclick="tab('venta',this)">Vender</button>
@@ -48,20 +48,20 @@ video{width:100%;border-radius:10px;background:#111}
 <section id="venta">
 <div class="panel">
 <h2>Escanear producto</h2>
-<input id="codigo" placeholder="Escanea o escribe el código"
+<input id="codigo" placeholder="Escanea o escribe el c贸digo"
 autocomplete="off" onkeydown="if(event.key==='Enter')agregar()">
 <button class="btn" onclick="agregar()">AGREGAR PRODUCTO</button>
-<button class="btn alt" onclick="abrirCamara()">📷 ESCANEAR CON CÁMARA</button>
+<button class="btn alt" onclick="abrirCamara()">馃摲 ESCANEAR CON C脕MARA</button>
 <div id="camaraBox" class="hidden">
 <video id="video" autoplay playsinline></video>
-<button class="btn red" onclick="cerrarCamara()">Cerrar cámara</button>
+<button class="btn red" onclick="cerrarCamara()">Cerrar c谩mara</button>
 </div>
 </div>
 <div class="panel">
 <h2>Compra del cliente</h2>
-<div id="carrito"><p class="muted">Sin productos todavía.</p></div>
+<div id="carrito"><p class="muted">Sin productos todav铆a.</p></div>
 <div class="total"><span>TOTAL</span><strong id="total">$0.00</strong></div>
-<button class="btn" onclick="cobrar()">💵 COBRAR</button>
+<button class="btn" onclick="cobrar()">馃挼 COBRAR</button>
 <button class="btn alt" onclick="limpiar()">Nueva compra</button>
 </div>
 </section>
@@ -69,29 +69,29 @@ autocomplete="off" onkeydown="if(event.key==='Enter')agregar()">
 <section id="productos" class="hidden">
 <div class="panel">
 <h2>Registrar o actualizar producto</h2>
-<label>Código de barras</label>
-<input id="pcodigo" placeholder="Código">
+<label>C贸digo de barras</label>
+<input id="pcodigo" placeholder="C贸digo">
 <label>Nombre del producto</label>
 <input id="pnombre" placeholder="Ej. Coca-Cola 600 ml">
 <label>Precio de venta en pesos</label>
 <input id="pprecio" type="number" min="0" step="0.01" placeholder="20.00">
 <button class="btn" onclick="guardarProducto()">GUARDAR PRODUCTO</button>
-<p class="muted">Si el código ya existe, podrás confirmar la actualización del precio.</p>
+<p class="muted">Si el c贸digo ya existe, podr谩s confirmar la actualizaci贸n del precio.</p>
 </div>
 <div class="panel">
-<h2>Catálogo de precios</h2>
-<input id="buscar" placeholder="Buscar producto o código" oninput="listarProductos()">
+<h2>Cat谩logo de precios</h2>
+<input id="buscar" placeholder="Buscar producto o c贸digo" oninput="listarProductos()">
 <div id="listaProductos"></div>
 </div>
 </section>
 
 <section id="ventas" class="hidden">
 <div class="panel">
-<h2>Resumen del día</h2>
+<h2>Resumen del d铆a</h2>
 <div class="total"><span>Ventas totales</span><strong id="corteTotal">$0.00</strong></div>
 <div class="item"><span>En efectivo</span><b id="corteEfectivo">$0.00</b></div>
 <div class="item"><span>Transferencias</span><b id="corteTransferencia">$0.00</b></div>
-<div class="item"><span>Número de ventas</span><b id="corteCantidad">0</b></div>
+<div class="item"><span>N煤mero de ventas</span><b id="corteCantidad">0</b></div>
 </div>
 <div class="panel">
 <h2>Historial de ventas</h2>
@@ -103,18 +103,18 @@ autocomplete="off" onkeydown="if(event.key==='Enter')agregar()">
 <div class="panel">
 <h2>Crear respaldo</h2>
 <p class="muted">Guarda todos tus productos, precios, cambios de precio y ventas en un archivo JSON.</p>
-<button class="btn" onclick="exportar()">⬇ DESCARGAR RESPALDO</button>
+<button class="btn" onclick="exportar()">猬?DESCARGAR RESPALDO</button>
 </div>
 <div class="panel">
-<h2>Restaurar información</h2>
-<p class="muted">Selecciona un respaldo creado anteriormente. La restauración reemplazará los datos actuales.</p>
+<h2>Restaurar informaci贸n</h2>
+<p class="muted">Selecciona un respaldo creado anteriormente. La restauraci贸n reemplazar谩 los datos actuales.</p>
 <input type="file" id="archivo" accept=".json,application/json">
 <button class="btn alt" onclick="restaurar()">RESTAURAR RESPALDO</button>
 </div>
 <div class="panel">
 <h2>Almacenamiento</h2>
 <p class="muted" id="estadoDatos"></p>
-<button class="btn alt" onclick="estado()">Actualizar información</button>
+<button class="btn alt" onclick="estado()">Actualizar informaci贸n</button>
 </div>
 </section>
 
@@ -155,7 +155,7 @@ function agregar(){
  if(!codigo)return;
  let p=productos.find(x=>x.codigo===codigo);
  if(!p){
- alert('Producto no registrado. Regístralo en Productos.');
+ alert('Producto no registrado. Reg铆stralo en Productos.');
  return;
  }
  let existente=carrito.find(x=>x.codigo===codigo);
@@ -172,7 +172,7 @@ function dibujar(){
  <small>${p.cantidad} x ${dinero(p.precio)}</small></div>
  <div><b>${dinero(p.precio*p.cantidad)}</b><br>
  <button class="red" onclick="quitar(${i})">Quitar</button></div></div>
- `).join(''):'<p class="muted">Sin productos todavía.</p>';
+ `).join(''):'<p class="muted">Sin productos todav铆a.</p>';
  document.getElementById('total').textContent=dinero(
  carrito.reduce((s,p)=>s+p.precio*p.cantidad,0));
 }
@@ -182,7 +182,7 @@ function quitar(i){
  dibujar();
 }
 function limpiar(){
- if(carrito.length&&!confirm('¿Vaciar la compra?'))return;
+ if(carrito.length&&!confirm('驴Vaciar la compra?'))return;
  carrito=[];dibujar();
 }
 function cobrar(){
@@ -219,7 +219,7 @@ function guardarProducto(){
  let p=productos.find(x=>x.codigo===codigo);
  if(p){
  if(!confirm('Producto: '+p.nombre+'\nPrecio anterior: '+dinero(p.precio)+
- '\nNuevo precio: '+dinero(precio)+'\n\n¿Confirmas actualización?'))return;
+ '\nNuevo precio: '+dinero(precio)+'\n\n驴Confirmas actualizaci贸n?'))return;
  if(!Array.isArray(p.historial))p.historial=[];
  p.historial.push({precio:p.precio,fecha:new Date().toISOString()});
  p.nombre=nombre;p.precio=precio;
@@ -266,9 +266,9 @@ function listarVentas(){
  document.getElementById('corteCantidad').textContent=dia.length;
  document.getElementById('listaVentas').innerHTML=ventas.length?
  ventas.map(v=>`<div class="item"><div><b>${fechaLocal(v.fecha)}</b><br>
- <small>${seguro(v.metodo)} · ${v.productos.length} tipos</small></div>
+ <small>${seguro(v.metodo)} 路 ${v.productos.length} tipos</small></div>
  <b>${dinero(v.total)}</b></div>`).join(''):
- '<p class="muted">Todavía no hay ventas.</p>';
+ '<p class="muted">Todav铆a no hay ventas.</p>';
 }
 function exportar(){
  guardar();
@@ -293,24 +293,24 @@ function restaurar(){
  !d.productos.every(p=>p&&typeof p.codigo==='string'&&
  typeof p.nombre==='string'&&Number.isFinite(p.precio))||
  !d.ventas.every(v=>v&&Array.isArray(v.productos)&&Number.isFinite(v.total))){
- throw Error('Formato inválido');
+ throw Error('Formato inv谩lido');
  }
- if(!confirm('Se reemplazarán los datos actuales. ¿Continuar?'))return;
+ if(!confirm('Se reemplazar谩n los datos actuales. 驴Continuar?'))return;
  productos=d.productos;ventas=d.ventas;guardar();
  alert('Respaldo restaurado correctamente.');
  estado();listarProductos();listarVentas();
- }catch(e){alert('El archivo no es un respaldo válido de Mi Tiendita 2.0.')}
+ }catch(e){alert('El archivo no es un respaldo v谩lido de Mi Tiendita 2.0.')}
  };
  r.readAsText(f);
 }
 function estado(){
  document.getElementById('estadoDatos').textContent=
- productos.length+' productos registrados · '+ventas.length+
+ productos.length+' productos registrados 路 '+ventas.length+
  ' ventas guardadas en este dispositivo.';
 }
 async function abrirCamara(){
  if(!('BarcodeDetector' in window)){
- alert('Tu navegador no ofrece lectura de códigos compatible. Usa el campo manual o un lector Bluetooth.');
+ alert('Tu navegador no ofrece lectura de c贸digos compatible. Usa el campo manual o un lector Bluetooth.');
  return;
  }
  try{
@@ -321,7 +321,7 @@ async function abrirCamara(){
  v.srcObject=stream;
  document.getElementById('camaraBox').classList.remove('hidden');
  escaneando=true;leerCamara();
- }catch(e){alert('No se pudo abrir la cámara. Comprueba los permisos.');}
+ }catch(e){alert('No se pudo abrir la c谩mara. Comprueba los permisos.');}
 }
 async function leerCamara(){
  if(!escaneando)return;
